@@ -31,8 +31,8 @@ jobs:
       - name: Write metrics to Job Summary
         run: |
           echo "## Experiment Results" >> $GITHUB_STEP_SUMMARY
-          echo "**Name:** SAMEER" >> $GITHUB_STEP_SUMMARY
-          echo "**Roll No:** 2022BCS0082" >> $GITHUB_STEP_SUMMARY
+          echo "**Name:** ARJUN" >> $GITHUB_STEP_SUMMARY
+          echo "**Roll No:** 2022BCS0084" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Metrics" >> $GITHUB_STEP_SUMMARY
           cat outputs/results.json >> $GITHUB_STEP_SUMMARY
