@@ -2,10 +2,10 @@ import os
 import json
 import joblib
 import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import Ridge
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
 # ------------------ PATHS ------------------
@@ -19,30 +19,24 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # ------------------ LOAD DATA ------------------
 df = pd.read_csv(DATA_PATH, sep=";")
 
+X = df.drop("quality", axis=1)
 y = df["quality"]
 
-# ------------------ CORRELATION-BASED FEATURE SELECTION ------------------
-corr_features = (
-    df.corr()["quality"]
-    .abs()
-    .sort_values(ascending=False)
-    .index[1:7]
-)
+# ------------------ STRATIFICATION BINS ------------------
+# Bin target into discrete categories for stratified split
+y_bins = pd.qcut(y, q=5, labels=False, duplicates="drop")
 
-X = df[corr_features]
-
-# ------------------ TRAIN-TEST SPLIT (80/20) ------------------
+# ------------------ TRAIN-TEST SPLIT (75/25, STRATIFIED) ------------------
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X,
+    y,
+    test_size=0.25,
+    stratify=y_bins,
+    random_state=42
 )
-
-# ------------------ STANDARDIZATION ------------------
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
 
 # ------------------ MODEL ------------------
-model = Ridge(alpha=1.0)
+model = LinearRegression()
 model.fit(X_train, y_train)
 
 # ------------------ EVALUATION ------------------
@@ -55,18 +49,15 @@ r2 = r2_score(y_test, y_pred)
 print(f"Mean Squared Error (MSE): {mse}")
 print(f"R2 Score: {r2}")
 
-joblib.dump(
-    {"model": model, "scaler": scaler, "features": list(corr_features)},
-    MODEL_PATH
-)
+joblib.dump(model, MODEL_PATH)
 
 results = {
-    "experiment_id": "EXP-04",
-    "model": "Ridge Regression",
-    "hyperparameters": "alpha=1.0",
-    "preprocessing": "Standardization",
-    "feature_selection": "Correlation-based (top 6)",
-    "split": "80/20",
+    "experiment_id": "EXP-03",
+    "model": "Linear Regression",
+    "hyperparameters": "Default",
+    "preprocessing": "None",
+    "feature_selection": "All",
+    "split": "75/25 (Stratified)",
     "mse": mse,
     "r2_score": r2
 }
