@@ -21,23 +21,15 @@ df = pd.read_csv(DATA_PATH, sep=";")
 X = df.drop("quality", axis=1)
 y = df["quality"]
 
-# ------------------ STRATIFICATION BINS ------------------
-# Required because target is continuous
-y_bins = pd.qcut(y, q=5, labels=False, duplicates="drop")
-
-# ------------------ TRAIN-TEST SPLIT (75/25, STRATIFIED) ------------------
+# ------------------ TRAIN-TEST SPLIT (60/40) ------------------
 X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.25,
-    stratify=y_bins,
-    random_state=42
+    X, y, test_size=0.4, random_state=42
 )
 
 # ------------------ MODEL ------------------
 model = RandomForestRegressor(
-    n_estimators=150,
-    max_depth=15,
+    n_estimators=100,
+    max_depth=12,
     random_state=42
 )
 model.fit(X_train, y_train)
@@ -55,12 +47,12 @@ print(f"R2 Score: {r2}")
 joblib.dump(model, MODEL_PATH)
 
 results = {
-    "experiment_id": "EXP-08",
+    "experiment_id": "EXP-07",
     "model": "Random Forest",
-    "hyperparameters": "n_estimators=150, max_depth=15",
+    "hyperparameters": "n_estimators=100, max_depth=12",
     "preprocessing": "None",
     "feature_selection": "All",
-    "split": "75/25 (Stratified)",
+    "split": "60/40",
     "mse": mse,
     "r2_score": r2
 }
