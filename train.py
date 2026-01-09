@@ -21,9 +21,9 @@ df = pd.read_csv(DATA_PATH, sep=";")
 X = df.drop("quality", axis=1)
 y = df["quality"]
 
-# ------------------ TRAIN-TEST SPLIT (70/30) ------------------
+# ------------------ TRAIN-TEST SPLIT (80/20) ------------------
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 
 # ------------------ MODEL ------------------
@@ -43,12 +43,12 @@ print(f"R2 Score: {r2}")
 joblib.dump(model, MODEL_PATH)
 
 results = {
-    "experiment_id": "EXP-02",
+    "experiment_id": "EXP-01",
     "model": "Linear Regression",
     "hyperparameters": "Default",
     "preprocessing": "None",
     "feature_selection": "All",
-    "split": "70/30",
+    "split": "80/20",
     "mse": mse,
     "r2_score": r2
 }
